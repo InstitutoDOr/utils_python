@@ -1,3 +1,6 @@
+# Fix module import in python 2.7 (json, same name of this file)
+from __future__ import absolute_import
+
 import json as p_json
 import re
 
