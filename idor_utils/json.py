@@ -1,7 +1,7 @@
-import json
+import json as p_json
 import re
 
-def load_json(filename):
+def load(filename):
     """Load data from a json file
     Parameters
     ----------
@@ -12,15 +12,16 @@ def load_json(filename):
     data : dict
     """
     with open(filename, 'r') as fp:
-        data = json.load(fp)
+        data = p_json.load(fp)
     return data
 
-def json_dumps_pretty(j, indent=2, sort_keys=True):
+def __json_dumps_pretty(j, indent=2, sort_keys=True):
     """Given a json structure, pretty print it by colliding numeric arrays
     into a line.
     If resultant structure differs from original -- throws exception
     """
-    js = j.replace(' \n', '\n')
+    js = p_json.dumps(j, indent=2, sort_keys=True)
+    js = js.replace(' \n', '\n')
     # trim away \n and spaces between entries of numbers
     js_ = re.sub(
         r'[\n ]+("?[-+.0-9e]+"?,?) *\n(?= *"?[-+.0-9e]+"?)', r' \1',
@@ -35,8 +36,8 @@ def json_dumps_pretty(j, indent=2, sort_keys=True):
     # the load from the original dump and reload from tuned up
     # version should result in identical values since no value
     # must be changed, just formatting.
-    j_just_reloaded = json.loads(js)
-    j_tuned = json.loads(js_)
+    j_just_reloaded = p_json.loads(js)
+    j_tuned = p_json.loads(js_)
 
     assert j_just_reloaded == j_tuned, \
        "Values differed when they should have not. "\
@@ -44,7 +45,7 @@ def json_dumps_pretty(j, indent=2, sort_keys=True):
 
     return js_
     
-def save_json(filename, data, indent=2):
+def save(filename, data, indent=2):
     """Save data to a json file
     Parameters
     ----------
@@ -53,5 +54,6 @@ def save_json(filename, data, indent=2):
     data : dict
         Dictionary to save in json file.
     """
+    s_data = __json_dumps_pretty( data, indent=indent, sort_keys=True)
     with open(filename, 'w') as fp:
-        fp.write(json_dumps_pretty(data, indent=indent, sort_keys=True))
+        fp.write(s_data)
